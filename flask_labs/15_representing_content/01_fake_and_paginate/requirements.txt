@@ -1,0 +1,6 @@
+Flask
+Flask-Login
+Flask-SQLAlchemy>=2.5.1
+Flask-Migrate
+Flask-WTF
+email_validator

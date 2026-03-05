@@ -1,0 +1,10 @@
+beautifulsoup4
+email-validator
+Flask
+Flask-SQLAlchemy>=2.5.1
+Flask-WTF
+Jinja2
+MarkupSafe
+SQLAlchemy
+Werkzeug
+WTForms
