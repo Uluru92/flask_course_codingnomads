@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div>
+        {% for x in costumes_list %}
+        <div class="costume">
+            <h2>{{ x["header"] }}</h2>
+            <img src="{{ x['image'] }}" alt="{{ x['header'] }}">
+            <p>{{ x["body"] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
