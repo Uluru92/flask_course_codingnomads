@@ -1,6 +1,6 @@
 # python environments
 .venv/
-.env/
+venv/
 .env/
 .pyvenv/
 .env

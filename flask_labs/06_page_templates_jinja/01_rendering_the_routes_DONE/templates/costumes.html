@@ -19,11 +19,14 @@
     </header>
     <div>
         {# Here is what each costume listing should look like in HTML #}
+        {% for x in costumes_list %}
         <div class="costume">
-            <h2>Skeleton</h2>
-            <img class="costume" src='/static/skeleton.jpg'>
-            <p>This style is great if you are feeling something extra spooky for your pooch.</p>
+            <h2>{{ x["header"] }}</h2>
+            <img src="{{ x['image'] }}" alt="{{ x['header'] }}">
+            <p>{{ x["body"] }}</p>
         </div>
+        {% endfor %}
+
         {# then the next costume, then the next... #}
         {# How can you list all of the costumes (in app.py as costumes_list) using Jinja? #}
     </div>
