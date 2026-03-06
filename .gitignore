@@ -1,6 +1,13 @@
-# python environments
-.venv/
-venv/
-.env/
-.pyvenv/
-.env
+# Python environments
+**/venv/
+**/.venv/
+**/.env/
+**/.pyvenv/
+**/.env
+
+# Build and IDE
+**/__pycache__/
+*.py[cod]
+*$py.class
+.vscode/
+.idea/
