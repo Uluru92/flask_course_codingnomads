@@ -1,12 +1,53 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, flash, redirect, url_for
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "keep it secret, keep it safe bbi" # This is just an example, this is not a proper secret!
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'data-dev.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 bootstrap = Bootstrap(app)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+
+    def __repr__(self):
+        return f"<Role {self.name}>"
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
+
+
+class NameForm(FlaskForm):
+    name = StringField("What is your name?", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        flash('Great! We hope you enjoy the community')
+        return redirect(url_for('home'))
+    return render_template('index.html', form=form, name=session.get('name'))
+
 
 @app.route('/about')
 def about_us():
@@ -69,6 +110,38 @@ def base_temp():
 @app.route('/index2')
 def index2_temp():
     return render_template("index2.html")
+
+# ERROR HANDLERS
+
+@app.errorhandler(403)
+def forbidden(e):
+    error_title = "Forbidden"
+    error_msg = "You shouldn't be here!"
+    return render_template('error.html',
+                           error_title=error_title,error_msg=error_msg), 403
+
+@app.errorhandler(404)
+def page_not_found(e):
+    error_title = "Not Found"
+    error_msg = "That page doesn't exist"
+    return render_template('error.html',
+                           error_title=error_title,error_msg=error_msg), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    error_title = "Internal Server Error"
+    error_msg = "Sorry, we seem to be experiencing some technical difficulties"
+    return render_template("error.html",
+                           error_title=error_title,
+                           error_msg=error_msg), 500
+
+# ERROR EXCEPTIONS -> ABORT
+@app.route('/user/<id>')
+def get_user(id):
+    user = load_user(id)
+    if not user:
+        abort()(404)
+    return f"<h1>Hello, {user}!</h1>"
 
 if __name__ == '__main__':
     app.run(debug=True)
